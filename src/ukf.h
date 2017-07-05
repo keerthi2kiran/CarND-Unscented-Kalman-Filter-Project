@@ -67,6 +67,35 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  //
+  ///* Added by Rudy
+  //
+  ///* augmented sigma points matrix
+  MatrixXd Xsig_aug_;
+
+  ///* Number of sigma points (2 * n_aug_ + 1)
+  int n_aug_sigma_;
+
+  ///* Measurement dimensions assigned by radar/lidar
+  int n_z_;
+
+  ///* Matrix for Sigma Points into Measurement Space
+  MatrixXd Zsig_;
+
+  ///* Radar/Lidear Measurement Vector (Predict Radar Measurement Step)
+  VectorXd z_;
+
+  ///* Measurement Prediction Mean (Predict Radar Measurement Step)
+  VectorXd z_pred_;
+
+  ///* Measurement Prediction Covariance (Predict Radar Measurement Step)
+  MatrixXd S_;
+
+  ///* Current NIS for radar
+  double NIS_radar_;
+
+  ///* Current NIS for lidar
+  double NIS_lidar_;
 
   /**
    * Constructor
@@ -90,18 +119,25 @@ public:
    * @param delta_t Time between k and k+1 in s
    */
   void Prediction(double delta_t);
+  void GenerateSigmaPoints();
+  void SigmaPointPrediction(double delta_t);
+  void PredictMeanAndCovariance();
 
   /**
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
    */
   void UpdateLidar(MeasurementPackage meas_package);
+  void PredictLidarMeasurement();
 
   /**
    * Updates the state and the state covariance matrix using a radar measurement
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+  void PredictRadarMeasurement();
+
+  void UpdateState(MeasurementPackage meas_package);
 };
 
 #endif /* UKF_H */
